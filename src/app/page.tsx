@@ -1,10 +1,14 @@
 import { Button } from "@/components/ui/button";
+import HeroSection from "@/components/heroComponent";
 
 export default function Home() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline bg-blue-500">Hello world!</h1>
-      <Button> Cliquez dessus</Button>
-    </div>
+    <>
+      <HeroSection></HeroSection>
+
+      <Button className="border-purple-200 text-purple-600 hover:border-transparent hover:bg-purple-600 hover:text-white active:bg-purple-700">
+        Se connecter
+      </Button>
+    </>
   );
 }
