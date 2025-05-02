@@ -1,14 +1,16 @@
-import { Button } from "@/components/ui/button";
-import HeroSection from "@/components/heroComponent";
+import HeroSection from "@/components/HeroSection";
+import CustomButton from "@/components/shared/CustomButton";
 
 export default function Home() {
   return (
     <>
-      <HeroSection></HeroSection>
-
-      <Button className="border-purple-200 text-purple-600 hover:border-transparent hover:bg-purple-600 hover:text-white active:bg-purple-700">
-        Se connecter
-      </Button>
+      <HeroSection
+        titre="Karma Board"
+        soustitre="Gérez vos projets avec sérénité"
+        description="La première plateforme inspirée du bouddhisme pour booster votre
+          productivité sans stress."
+      ></HeroSection>
+      <CustomButton>Se Connecter</CustomButton>
     </>
   );
 }
