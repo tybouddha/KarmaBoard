@@ -1,4 +1,5 @@
-import { Button } from "./ui/button";
+"use client";
+import CustomButton from "./shared/CustomButton";
 
 type HeroSectionPropsType = {
   titre: string;
@@ -11,6 +12,9 @@ export default function HeroSection({
   soustitre,
   description,
 }: HeroSectionPropsType) {
+  const handleClick = () => {
+    alert("Bouton cliqué !");
+  };
   return (
     <section
       className="bg-cover bg-center bg-no-repeat py-20 px-6"
@@ -20,7 +24,20 @@ export default function HeroSection({
         <h1 className="text-4xl font-bold text-gray-800">{titre}</h1>
         <h2 className="text-lg font-semibold text-gray-700">{soustitre}</h2>
         <p className="text-gray-600 font-medium">{description}</p>
-        <Button>Se Connecter</Button>
+        <CustomButton
+          variant="primary"
+          onClick={handleClick}
+          className="mt-6"
+          label="Se Connecter"
+        >
+          Se Connecter
+        </CustomButton>
+        <CustomButton
+          variant="secondary"
+          onClick={handleClick}
+          className="mt-4"
+          label="En savoir plus"
+        />
       </div>
     </section>
   );
