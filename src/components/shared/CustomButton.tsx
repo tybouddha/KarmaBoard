@@ -15,13 +15,12 @@ type CustomButtonPropsType = {
 export default function CustomButton({
   children,
   label,
-  variant = "primary", // Valeur par défaut
+  variant = "primary",
   loading = false,
   className,
   disabled,
   onClick,
 }: CustomButtonPropsType) {
-  // Styles pour chaque variant, inspirés du style bouddhique
   const variantStyles = {
     primary: "bg-amber-500 text-white hover:bg-amber-600 shadow-sm",
     secondary:
@@ -31,7 +30,7 @@ export default function CustomButton({
   return (
     <Button
       className={cn(
-        "rounded-xl font-semibold transition-all",
+        "rounded-xl font-semibold transition-all duration-300 hover:scale-105",
         variantStyles[variant],
         className
       )}
@@ -39,8 +38,7 @@ export default function CustomButton({
       onClick={onClick}
     >
       {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-      {children || label}{" "}
-      {/* Affiche children ou label si children est absent */}
+      {children || label}
     </Button>
   );
 }

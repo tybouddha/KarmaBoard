@@ -1,5 +1,12 @@
-@import "tailwindcss";
-/* @import "tw-animate-css"; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap");
+
+:root {
+  --font-lora: "Lora", serif;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -112,11 +119,11 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-@layer base {
+/* @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
   }
-}
+} */

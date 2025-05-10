@@ -1,5 +1,6 @@
 "use client";
 import CustomButton from "./shared/CustomButton";
+import { useRouter } from "next/navigation";
 
 type HeroSectionPropsType = {
   titre: string;
@@ -12,9 +13,12 @@ export default function HeroSection({
   soustitre,
   description,
 }: HeroSectionPropsType) {
+  const router = useRouter();
+
   const handleClick = () => {
-    alert("Bouton cliqué !");
+    router.push("/login");
   };
+
   return (
     <section
       className="bg-cover bg-center bg-no-repeat py-20 px-6"
@@ -24,6 +28,7 @@ export default function HeroSection({
         <h1 className="text-4xl font-bold text-gray-800">{titre}</h1>
         <h2 className="text-lg font-semibold text-gray-700">{soustitre}</h2>
         <p className="text-gray-600 font-medium">{description}</p>
+
         <CustomButton
           variant="primary"
           onClick={handleClick}
@@ -32,12 +37,14 @@ export default function HeroSection({
         >
           Se Connecter
         </CustomButton>
+
         <CustomButton
           variant="secondary"
-          onClick={handleClick}
-          className="mt-4"
-          label="En savoir plus"
-        />
+          onClick={() => console.log("En savoir plus")}
+          className="mt-4 hover:scale-105"
+        >
+          En savoir plus
+        </CustomButton>
       </div>
     </section>
   );
