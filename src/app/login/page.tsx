@@ -1,64 +1,53 @@
 "use client";
-import { signIn } from "next-auth/react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Flower } from "lucide-react";
-import { useState } from "react";
+import { LoginForm } from "@/components/login-form";
+import CustomButton from "@/components/shared/CustomButton";
+import Link from "next/link";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const { status } = useSession();
+  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
-    if (result?.error) {
-      setError(result.error);
-    } else {
-      window.location.href = "/";
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/dashboard");
     }
-  };
+  }, [status, router]);
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-50 to-white">
+        <div className="flex items-center gap-2">
+          <Flower className="h-6 w-6 text-amber-500 animate-pulse" />
+          <p className="text-gray-800 font-lora">Patience...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-50 to-white">
-      <div className="bg-white bg-opacity-80 backdrop-blur-md rounded-xl p-10 max-w-md w-full">
-        <h1 className="text-2xl font-bold text-gray-800 font-lora text-center">
+    <section className="min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-50 to-white relative">
+      <div
+        className="absolute inset-0 opacity-10 animate-spin-slow"
+        style={{ backgroundImage: "url('/img/mandala.png')" }}
+      />
+      <div className="bg-white bg-opacity-80 backdrop-blur-md rounded-xl p-10 max-w-md w-full relative z-10 border border-amber-300 shadow-amber-200">
+        <div className="flex justify-center mb-4">
+          <Flower className="h-12 w-12 text-amber-500 animate-pulse" />
+        </div>
+        <h1 className="text-2xl font-bold text-gray-800 font-lora text-center animate-fade-in">
           Connexion à KarmaBoard
         </h1>
-        {error && <p className="text-red-600 text-center mt-4">{error}</p>}
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="font-lora border-amber-200 focus:ring-amber-500"
-          />
-          <Input
-            type="password"
-            placeholder="Mot de passe"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="font-lora border-amber-200 focus:ring-amber-500"
-          />
-          <Button
-            type="submit"
-            className="w-full bg-amber-500 text-white hover:bg-amber-600 flex items-center justify-center gap-2"
-          >
-            <Flower className="h-4 w-4" />
-            Se connecter
-          </Button>
-        </form>
+        <LoginForm className="mt-6" />
         <div className="mt-6 flex justify-center gap-4">
-          <Button
-            variant="outline"
+          <CustomButton
+            variant="secondary"
             onClick={() => signIn("google")}
-            className="flex items-center gap-2 border-amber-200 text-amber-800 hover:bg-amber-50"
+            className="flex items-center gap-2"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -67,11 +56,11 @@ export default function LoginPage() {
               />
             </svg>
             Google
-          </Button>
-          <Button
-            variant="outline"
+          </CustomButton>
+          <CustomButton
+            variant="secondary"
             onClick={() => signIn("github")}
-            className="flex items-center gap-2 border-amber-200 text-amber-800 hover:bg-amber-50"
+            className="flex items-center gap-2"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -80,8 +69,14 @@ export default function LoginPage() {
               />
             </svg>
             GitHub
-          </Button>
+          </CustomButton>
         </div>
+        <p className="text-gray-600 text-center mt-4">
+          Pas de compte ?{" "}
+          <Link href="/signup" className="text-amber-600 hover:underline">
+            Inscription
+          </Link>
+        </p>
       </div>
     </section>
   );

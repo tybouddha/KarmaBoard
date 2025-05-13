@@ -90,6 +90,14 @@ export const authConfig: NextAuthConfig = {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // Redirige vers /dashboard après connexion
+      if (url.includes("/api/auth/callback")) {
+        return `${baseUrl}/dashboard`;
+      }
+      // Si l'utilisateur est déjà connecté, redirige vers /dashboard
+      return url.startsWith(baseUrl) ? url : `${baseUrl}/dashboard`;
+    },
   },
   secret: process.env.AUTH_SECRET,
   basePath: "/api/auth",
