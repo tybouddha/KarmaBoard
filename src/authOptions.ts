@@ -98,6 +98,10 @@ export const authConfig: NextAuthConfig = {
       // Si l'utilisateur est déjà connecté, redirige vers /dashboard
       return url.startsWith(baseUrl) ? url : `${baseUrl}/dashboard`;
     },
+    async signIn({ user, account, profile }) {
+      console.log("signIn:", { user, account, profile });
+      return true;
+    },
   },
   secret: process.env.AUTH_SECRET,
   basePath: "/api/auth",
