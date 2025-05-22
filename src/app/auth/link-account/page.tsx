@@ -32,7 +32,7 @@ export default function LinkAccountPage() {
       if (!response.ok) {
         throw new Error(data.message || "Erreur lors de la soumission");
       }
-      if (data.action === "created") {
+      if (data.action === "created" && !session) {
         const signInResult = await signIn("credentials", {
           email,
           provider,
@@ -76,44 +76,52 @@ export default function LinkAccountPage() {
     );
   }
   return (
-    <div className="min-h-screen flex items-center justify-center bg-amber-50">
-      <div className="bg-white bg-opacity-80 p-8 rounded-lg shadow-lg max-w-md w-full">
-        <a
-          href="/"
-          className="absolute top-4 left-4 text-amber-700 hover:text-amber-500"
-        >
-          <Lotus className="h-6 w-6 animate-pulse-slow" />
-        </a>
-        <h1 className="text-2xl font-lora text-amber-700 mb-4">
-          Lier votre compte
-        </h1>
-        <CustomButton
-          type="submit"
-          className="bg-amber-500 hover:bg-amber-600 text-white"
-          onClick={handleJoinAccount}
-          disabled={loading}
-        >
-          <span className="flex items-center gap-2">
-            <Flower className="h-4 w-4 animate-pulse-slow" />
-            OUI
-          </span>
-        </CustomButton>
-        <CustomButton
-          type="submit"
-          className="bg-red-500 hover:bg-red-600 text-white"
-          onClick={handleCancel}
-          disabled={loading}
-        >
-          <span className="flex items-center gap-2">
-            <Flower className="h-4 w-4 animate-pulse-slow" />
-            NON
-          </span>
-        </CustomButton>
-        {error && (
-          <p className="text-red-600 bg-red-100 p-2 rounded mt-4">{error}</p>
-        )}
-        <Toaster />
+    <section
+      className="min-h-screen flex items-center justify-center"
+      style={{ backgroundImage: "url('/img/lotus.png')" }}
+    >
+      <div className="relative bg-white bg-opacity-10 p-6 rounded-xl shadow-md max-w-md w-full">
+        <div className="bg-white bg-opacity-80 p-8 rounded-lg shadow-lg max-w-md w-full">
+          <a
+            href="/"
+            className="absolute top-4 left-4 text-amber-700 hover:text-amber-500"
+          >
+            <Lotus className="h-6 w-6 animate-pulse-slow" />
+          </a>
+          <h1 className="text-2xl font-lora text-amber-700 mb-4 text-center">
+            Lier votre compte
+          </h1>
+          <div className="flex justify-center gap-4 mb-4">
+            <CustomButton
+              type="button"
+              className="bg-amber-500 hover:bg-amber-600 text-white"
+              onClick={handleJoinAccount}
+              disabled={loading}
+            >
+              <span className="flex items-center gap-2">
+                <Flower className="h-4 w-4 animate-pulse-slow" />
+                OUI
+              </span>
+            </CustomButton>
+
+            <CustomButton
+              type="button"
+              className="bg-red-500 hover:bg-red-600 text-white"
+              onClick={handleCancel}
+              disabled={loading}
+            >
+              <span className="flex items-center gap-2">
+                <Flower className="h-4 w-4 animate-pulse-slow" />
+                NON
+              </span>
+            </CustomButton>
+          </div>
+          {error && (
+            <p className="text-red-600 bg-red-100 p-2 rounded mt-4">{error}</p>
+          )}
+          <Toaster />
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
