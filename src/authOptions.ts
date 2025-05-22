@@ -14,6 +14,8 @@ type MongooseUserType = {
   password: string;
   name?: string;
   role: string;
+  provider?: string;
+  providerAccountId?: string;
 };
 
 export const authConfig: NextAuthConfig = {
@@ -30,45 +32,67 @@ export const authConfig: NextAuthConfig = {
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        password: { label: "Password", type: "password", optional: true },
+        provider: { label: "Provider", type: "text", optional: true },
+        providerAccountId: {
+          label: "Provider Account ID",
+          type: "text",
+          optional: true,
+        },
       },
       async authorize(credentials) {
-        // Typage explicite des credentials
-        const { email, password } = credentials as {
-          email: string;
-          password: string;
-        };
+        const { email, password, provider, providerAccountId } = credentials;
 
-        if (!email || !password) {
-          throw new Error("Email et mot de passe requis");
+        if (!email) {
+          throw new Error("Email requis");
         }
 
         await connectDB();
 
-        const user = (await User.findOne({
-          email,
-        }).exec()) as MongooseUserType | null;
-
-        if (!user) {
-          throw new Error("Utilisateur non trouvé");
+        if (password) {
+          // Logique existante pour email/mot de passe
+          const user = (await User.findOne({
+            email,
+          }).exec()) as MongooseUserType | null;
+          if (!user || !user.password) {
+            throw new Error("Utilisateur ou mot de passe invalide");
+          }
+          if (typeof password !== "string") {
+            throw new Error("Mot de passe invalide");
+          }
+          const isValid = await verifyPassword(password, user.password);
+          if (!isValid) {
+            throw new Error("Mot de passe incorrect");
+          }
+          return {
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            provider: user.provider,
+            providerAccountId: user.providerAccountId,
+          };
+        } else if (provider && providerAccountId) {
+          // Logique pour OAuth
+          const user = await User.findOne({
+            email,
+            provider,
+            providerAccountId,
+          }).exec();
+          if (!user) {
+            throw new Error("Utilisateur non trouvé");
+          }
+          return {
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            provider: user.provider,
+            providerAccountId: user.providerAccountId,
+          };
         }
 
-        if (!user.password || typeof user.password !== "string") {
-          throw new Error("Mot de passe invalide");
-        }
-
-        const isValid = await verifyPassword(password, user.password);
-
-        if (!isValid) {
-          throw new Error("Mot de passe incorrect");
-        }
-
-        return {
-          id: user._id.toString(),
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        };
+        throw new Error("Données d’authentification manquantes");
       },
     }),
   ],
@@ -79,7 +103,9 @@ export const authConfig: NextAuthConfig = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role;
+        token.role = user.role as string;
+        token.provider = user.provider as string;
+        token.providerAccountId = user.providerAccountId as string;
       }
       return token;
     },
@@ -87,6 +113,8 @@ export const authConfig: NextAuthConfig = {
       if (session.user && token.id) {
         session.user.id = token.id;
         session.user.role = token.role;
+        session.user.provider = token.provider as string;
+        session.user.providerAccountId = token.providerAccountId as string;
       }
       return session;
     },
@@ -98,8 +126,16 @@ export const authConfig: NextAuthConfig = {
       // Si l'utilisateur est déjà connecté, redirige vers /dashboard
       return url.startsWith(baseUrl) ? url : `${baseUrl}/dashboard`;
     },
-    async signIn({ user, account, profile }) {
-      console.log("signIn:", { user, account, profile });
+    async signIn({ user, account }) {
+      // console.log("signIn:", { user, account, profile });
+      if (account?.provider === "google" || account?.provider === "github") {
+        await connectDB();
+        const existingUser = await User.findOne({ email: user.email });
+        if (!existingUser) {
+          // L’utilisateur sera créé dans /api/auth/link-account
+          return true;
+        }
+      }
       return true;
     },
   },

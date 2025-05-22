@@ -1,6 +1,16 @@
 import mongoose, { Schema, models } from "mongoose";
 
-const userSchema = new Schema({
+interface IUser extends Document {
+  email: string;
+  password?: string;
+  name?: string;
+  role: string;
+  provider?: string;
+  providerAccountId?: string;
+  createdAt: Date;
+}
+
+const userSchema = new Schema<IUser>({
   email: {
     type: String,
     required: true,
@@ -13,6 +23,9 @@ const userSchema = new Schema({
   name: {
     type: String,
   },
+  provider: { type: String, required: false },
+  providerAccountId: { type: String, required: false },
+
   role: { type: String, default: "user" },
   createdAt: {
     type: Date,

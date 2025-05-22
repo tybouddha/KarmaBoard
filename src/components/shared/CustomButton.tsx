@@ -9,7 +9,8 @@ type CustomButtonPropsType = {
   loading?: boolean;
   className?: string;
   disabled?: boolean;
-  onClick: () => void;
+  onClick?: () => void;
+  type?: "button" | "submit" | "reset";
 };
 
 export default function CustomButton({
@@ -20,6 +21,7 @@ export default function CustomButton({
   className,
   disabled,
   onClick,
+  type,
 }: CustomButtonPropsType) {
   const variantStyles = {
     primary: "bg-amber-500 text-white hover:bg-amber-600 shadow-sm",
@@ -34,6 +36,7 @@ export default function CustomButton({
         variantStyles[variant],
         className
       )}
+      type={type}
       disabled={loading || disabled}
       onClick={onClick}
     >
